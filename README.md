@@ -44,7 +44,7 @@ pip install selenium requests python-dotenv
 .
 ├── main.py        # Authentication logic
 ├── scanner_.py    # Wi-Fi scanning module
-├── .env           # Credentials (ignored by git)
+├── .env           # Credentials
 └── README.md
 ```
 
