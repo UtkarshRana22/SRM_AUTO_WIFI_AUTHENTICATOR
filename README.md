@@ -59,7 +59,6 @@ USER_NAME=your_registration_number
 PASSWORD=your_wifi_password
 ```
 
-⚠️ Never commit `.env` to version control.
 
 ---
 
@@ -206,5 +205,4 @@ The author assumes **no responsibility** for misuse or policy violations.
 MIT License
 Use, modify, and distribute responsibly.
 
-```
-```
+
