@@ -32,7 +32,15 @@ def main():
         browser=webdriver.Chrome(options=opns)
         z=True
         count=0
-        browser.get('https://iach.srmist.edu.in/Connect/PortalMain')
+        url=''
+        try:
+            requests.get("https://iach.srmist.edu.in/Connect/PortalMain")
+            url="https://iach.srmist.edu.in/Connect/PortalMain"
+        except:
+             url="https://iac.srmist.edu.in/Connect/PortalMain"
+        
+           
+        browser.get(url)
         time.sleep(2)
         config=dotenv_values(".env")
         while z and count<2000:
