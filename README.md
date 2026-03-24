@@ -1,200 +1,147 @@
-````md
 # SRM_AUTO_WIFI_AUTHENTICATOR
 
-A Python-based automation script that detects the **SRMIST Wi-Fi network** and automatically authenticates the user on the SRM captive portal using **modern Selenium** (browser drivers are managed automatically).
+A Windows-based automation tool that detects network conditions and automatically authenticates the user on the **SRMIST captive portal** using Selenium.
 
-Designed for seamless, hands-free Wi-Fi authentication on campus — including support for **Windows autorun**.
+The project is packaged as a **standalone executable with an installer**, enabling seamless background execution — with **no dependency on `netsh` or Windows Location Services**.
 
 ---
 
 ## ✨ Features
 
-- 📡 Detects nearby Wi-Fi networks (Windows)
-- 🌐 Checks existing internet connectivity
-- 🤖 Automates SRMIST captive portal authentication
-- 🔐 Secure credential handling via `.env`
-- 🖥 Headless browser execution
-- 🔁 Can be configured to **run automatically on Windows startup**
+* 🌐 Detects internet connectivity intelligently
+* 🧠 Detects **captive portal presence**
+* 🤖 Automates SRMIST captive portal authentication
+* 🖥 Headless browser execution
+* ⚙️ Distributed as a **standalone `.exe`**
+* 📦 Installer support via **Inno Setup**
+* 🚫 No dependency on `netsh` or Location Services
+* ⚡ Smart execution logic to avoid unnecessary runs
 
 ---
 
 ## 🧰 Tech Stack
 
-- Python 3.8+
-- Selenium (automatic driver management)
-- Requests
-- python-dotenv
-- Windows `netsh` Wi-Fi utilities
+* Python 3.8+
+* Selenium (with automatic driver management)
+* Requests
+* PyQt5
+* python-dotenv
+* auto-py-to-exe (executable packaging)
+* Inno Setup (installer creation)
 
 ---
 
 ## 📦 Installation
 
-```bash
-pip install selenium requests python-dotenv
-````
+### 🔹 For End Users (Recommended)
 
-> Selenium automatically downloads and manages the correct browser driver.
+1. Run the installer (`.exe`)
+2. Complete setup
+3. Launch the application
 
----
-
-## 📁 Project Structure
-
-```
-.
-├── main.py        # Authentication logic
-├── scanner_.py    # Wi-Fi scanning module
-├── .env           # Credentials
-└── README.md
-```
+> No Python installation required
 
 ---
 
-## 🔐 Environment Variables
+### 🔹 For Developers
 
-Create a `.env` file in the project root:
-
-```env
-USER_NAME=your_registration_number
-PASSWORD=your_wifi_password
+```bash id="g6z2fp"
+pip install selenium requests pyqt5
 ```
-
 
 ---
 
 ## ⚙️ How It Works
 
-1. **Internet Connectivity Check**
+1. **Connectivity Check**
 
-   * Sends a request to Google’s `generate_204` endpoint
+   * Sends a request to Google's `generate_204` endpoint
 
-2. **Wi-Fi Detection**
+2. **Captive Portal Detection**
 
-   * Scans available networks using `netsh wlan show networks`
-   * Looks for the `SRMIST` SSID
+   * If the request is **redirected** or does not return the expected `204` status, a captive portal is detected
 
-3. **Portal Authentication**
+3. **Authentication Flow**
 
-   * Opens the SRMIST captive portal
-   * Injects credentials from `.env`
-   * Submits the login form
-   * Confirms successful authentication
+   * Launches a headless browser
+   * Opens captive portal
+   * Submits login form
+   * Verifies successful authentication
 
 ---
 
 ## ▶️ Usage
 
-```bash
+### Run Executable
+
+```id="ljm9k2"
+SRM_AUTO_WIFI_AUTHENTICATOR.exe
+```
+
+### Run via Python (Developer Mode)
+
+```bash id="c9e8k1"
 python main.py
 ```
 
-The script will:
+---
 
-* Exit if internet access already exists
-* Exit if SRMIST Wi-Fi is not detected
-* Authenticate automatically when required
+## ⚠️ Important Notes
+
+### 🔐 Admin Privileges
+
+* If installed in `Program Files`, the app may require **administrator privileges**
+* Some operations may fail without elevation
 
 ---
 
-## 🔁 Windows Autorun (Optional)
+### 📡 Wi-Fi Requirement
 
-You can fully automate authentication by running this script at **Windows startup**.
+> You must already be connected to a network that uses the SRM captive portal
 
-### Method 1: Startup Folder (Simple)
-
-1. Press `Win + R`
-2. Enter:
-
-   ```
-   shell:startup
-   ```
-3. Create a shortcut to:
-
-   ```bash
-   python path\to\main.py
-   ```
-4. Ensure Python is added to PATH
+This tool does **not** connect to Wi-Fi — it only handles authentication.
 
 ---
 
-### Method 2: Task Scheduler (Recommended)
+## 🚧 Challenges & Limitations
 
-1. Open **Task Scheduler**
-2. Create a **Basic Task**
-3. Trigger: **At log on**
-4. Action: **Start a program**
-5. Program/script:
+* **Portal Dependency**
 
-   ```text
-   python
-   ```
-6. Arguments:
+  * Breaks if captive portal UI changes
 
-   ```text
-   path\to\main.py
-   ```
-7. Start in:
+* **Captive Portal Detection Variability**
 
-   ```text
-   path\to\project\folder
-   ```
-8. Enable:
+  * Detection relies on HTTP response behavior (redirect/status mismatch)
+  * May vary depending on network configuration
 
-   * “Run whether user is logged on or not”
-   * “Run with highest privileges” (optional)
+* **Headless Browser Variability**
 
----
-
-## ⚠️ Important Disclaimers
-
-### 1. Wi-Fi Must Be Connected
-
-> **You must already be connected to the SRMIST Wi-Fi network before this script runs.**
-
-This tool does **not** connect to Wi-Fi — it only handles captive portal authentication.
-
----
-
-### 2. Location Services Required (Windows)
-
-> **Windows Location Services must be enabled for `netsh wlan show networks` to detect SSIDs.**
-
-Enable via:
-
-```
-Settings → Privacy & Security → Location → Location services → ON
-```
-
----
-
-## ⚠️ Notes & Limitations
-
-* Windows only
-* Absolute XPaths may break if portal UI changes
-* Headless Chrome is enabled by default
-* Retry limits prevent infinite execution
+  * May behave differently across systems
 
 ---
 
 ## 🐛 Troubleshooting
 
-**Script runs but does nothing**
+### Authentication does not trigger
 
-* Confirm autorun path is correct
-* Ensure Python is in PATH
-* Try running manually once to verify setup
+* Ensure you are connected to a network requiring login
+* Try opening a browser manually to confirm captive portal
 
-**SSID not detected**
+---
 
-* Check Location Services
-* Ensure Wi-Fi is enabled
+### Authentication fails
+
+* Portal UI may have changed
+* Update selectors/XPaths
 
 ---
 
 ## 📜 Legal & Usage Notice
 
-This project is intended **for educational and personal convenience only**.
-Automating captive portals may violate institutional IT policies.
+This project is intended **for educational and personal convenience purposes only**.
+
+Automating captive portal authentication may violate institutional IT policies.
+Users are responsible for ensuring compliance with their organization's guidelines.
 
 The author assumes **no responsibility** for misuse or policy violations.
 
@@ -204,6 +151,3 @@ The author assumes **no responsibility** for misuse or policy violations.
 
 MIT License
 Use, modify, and distribute responsibly.
-
-
-

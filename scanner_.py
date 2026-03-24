@@ -28,3 +28,6 @@ def get_scanner():
             networks.append(p.split(':')[1])
     print(networks)
     return networks
+def get_processes():
+    output = get_command_output("tasklist")
+    return output.count("AWA.exe")>1
