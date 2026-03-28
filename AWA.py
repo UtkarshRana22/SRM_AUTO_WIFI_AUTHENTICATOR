@@ -155,9 +155,11 @@ class Worker(QThread):
                 if detect_wifi():
                     main()
             except:
-                if detect_wifi1():
-                    main()
-
+                try:
+                    if detect_wifi1():
+                        main()
+                except Exception as e:
+                    window.status.setText(str(e))
         else:
             window.status.setText("Already Connected to Internet!")
             window.status.setStyleSheet("color:green;")
@@ -273,6 +275,7 @@ class MainWindow(QMainWindow):
               
                 z=self.assertedtime
                 if z!=None:
+                    print("this")
                     print(z)
                     t=int(float(z))
                     timeto=86400-(int(float(time.time()))-t)
@@ -289,7 +292,7 @@ class MainWindow(QMainWindow):
                         timer.start(1000)
                   
                 else:
-                    
+                    print("that")              
                     with open(os.path.join(os.getenv("APPDATA"),"AWA")+"\\times.log","r") as r:
                         yo=[y.strip() for y in r.readlines() if y!='TIME LOGS AWA']
                         if len(yo)!=0:
@@ -307,8 +310,7 @@ class MainWindow(QMainWindow):
                                 timer=QTimer(self)
                                 timer.timeout.connect(self.timer_function_)
                                 timer.start(1000)
-                            else:
-                                self.start_thread()
+                   
                      
             except Exception as e:
                 print("error1",e)
@@ -368,6 +370,7 @@ app.setQuitOnLastWindowClosed(False)
 window = MainWindow()
 window.show()
 if scanner_.get_processes():
+    print('yeah')
     sys.exit(0)
 else:
     print("nako re baa")
