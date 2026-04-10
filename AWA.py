@@ -33,9 +33,7 @@ def detect_wifi(target_ssid="SRMIST"):
         if network.strip() == target_ssid:
             print("College Wi-Fi detected!")
             window.status.setText("Network Detected......")
-            # if not window.isVisible():
-            #     window.tray.showMessage("SRM AWA","Network Detected!")
-            #     window.tray.hide()
+            
             
             return True
     return False
@@ -81,9 +79,7 @@ def main():
         url=''
         window.status.setStyleSheet("color:red;")
         window.status.setText("Detecting Captive Portal......")
-        # if not window.isVisible():
-        #    window.tray.showMessage("SRM AWA","Detecting Captive Portal......")
-        #    window.tray.hide()
+    
         
 
 
@@ -103,7 +99,7 @@ def main():
         browser.get(url)
         window.status.setText("Getting Instance.....")
         if not window.isVisible():
-                window.tray.showMessage("SRM AWA","Getting Instance!")
+                window.tray.showMessage("AWA","Getting Instance!")
         time.sleep(2)
         config=dotenv_values(os.path.join(os.getenv("APPDATA"),"AWA")+"\\.env")
         while z and count<2000:
@@ -113,6 +109,7 @@ def main():
             password=browser.find_element(By.ID,'LoginUserPassword_auth_password')
             button=browser.find_element(By.XPATH,'/html/body/div/table/tbody/tr[1]/td/div[2]/table/tbody/tr[2]/td/div/div/table/tbody/tr[2]/td/a[1]/span')
             time.sleep(2)
+            window.status.setStyleSheet("color:blue;")
             username.send_keys(config["USER_NAME"])
             window.status.setText("User Name Entered.....")
             time.sleep(2)
@@ -124,14 +121,16 @@ def main():
             time.sleep(2)
             window.status.setText("Assuring Login.....")
             z=False
-        #1772740018.0050554
+   
         x=True
         while x:
             try:
                 logout_btn=browser.find_element(By.XPATH,'/html/body/div/table/tbody/tr[1]/td/div[2]/table/tbody/tr[2]/td/div/div/div/table/tbody/tr[2]/td/a[1]/span')
                 window.status.setText('logged in successfully!!!!')
+                window.status.setStyleSheet("color:green;")
                 if not window.isVisible():
-                    window.tray.showMessage("SRM AWA","Logged IN!")
+                    window.tray.showMessage("AWA","Logged IN!")
+
                     
                 browser.quit()
                 x=False
@@ -176,6 +175,15 @@ class IntialSetup(QThread):
         browser.get("https://google.com")
         browser.quit()
      
+class Keyboard_Monitor(QThread):
+    def run(self):
+        while True:
+            if keyboard.is_pressed("Alt") and keyboard.is_pressed("S"):
+                if not window.thread_.isRunning():
+                    window.start_thread()
+            if keyboard.is_pressed("Alt") and keyboard.is_pressed("Q"):break
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -187,8 +195,12 @@ class MainWindow(QMainWindow):
         else:
             uic.loadUi(os.getcwd()+"\\_internal\\design.ui", self)  
         self.autotrigger=None
-        self.assertedtime=0     
+        self.assertedtime=0 
 
+        self.keyboard_monitor=Keyboard_Monitor()
+        self.keyboard_monitor.finished.connect(lambda:sys.exit(0))
+        self.keyboard_monitor.start()
+        
   
 
         if not os.path.exists(os.path.join(os.getenv("APPDATA"),"AWA")+"\\times.log"):
@@ -228,8 +240,8 @@ class MainWindow(QMainWindow):
         self.restart.clicked.connect(lambda:os.execl(sys.executable,sys.executable,*sys.argv))
        
        
-        keyboard.add_hotkey("Alt+S",lambda:QTimer.singleShot(0,self.start_thread),suppress=True)
-        # shortcut.activated.connect(self.p)
+        
+     
         if not getattr(sys,"frozen",False):
 
             self.tray = QSystemTrayIcon(QIcon("ic_launcher.png"), self)  
@@ -261,16 +273,17 @@ class MainWindow(QMainWindow):
         
         
     def start_thread(self):
-            self.thread = Worker()
-            self.thread.finished.connect(lambda:self.connectbtn.setEnabled(True))
-            self.thread.finished.connect(self.thread_finished)
+            self.thread_ = Worker()
+            self.thread_.finished.connect(lambda:self.connectbtn.setEnabled(True))
+            self.thread_.finished.connect(self.thread_finished)
             self.connectbtn.setEnabled(False)
-            self.thread.start()
+            self.thread_.start()
     def intialsetup(self):
             self.thread = IntialSetup()
             self.thread.finished.connect(lambda:self.page.setCurrentIndex(2))
             self.thread.start()
     def thread_finished(self):
+            
             try:
               
                 z=self.assertedtime
@@ -287,9 +300,9 @@ class MainWindow(QMainWindow):
                         self.autotrigger.timeout.connect(self.start_thread)
                         self.autotrigger.start(timeto)
                         print(self.autotrigger.remainingTime())
-                        timer=QTimer(self)
-                        timer.timeout.connect(self.timer_function_)
-                        timer.start(1000)
+                        autotrigger_monitor=QTimer(self)
+                        autotrigger_monitor.timeout.connect(self.timer_function_)
+                        autotrigger_monitor.start(1000)
                   
                 else:
                     print("that")              
@@ -300,22 +313,30 @@ class MainWindow(QMainWindow):
                             t=int(float(yo[len(yo)-1]))
                             timeto=86400-(int(float(time.time()))-t)
                             timeto*=1000
+
                             print(timeto)
                             if timeto>=0:
                                 self.autotrigger=QTimer(self)
                                 self.autotrigger.setSingleShot(True)
                                 self.autotrigger.timeout.connect(self.start_thread)
                                 self.autotrigger.start(timeto)
-                                print(self.autotrigger.remainingTime())
+                                print(self.autotrigger.remainingTime(),'ye')
                                 timer=QTimer(self)
                                 timer.timeout.connect(self.timer_function_)
                                 timer.start(1000)
-                   
+                                self.autotrigger_monitor=QTimer(self)
+                                self.autotrigger_monitor.timeout.connect(self.check_timeout_)
+                                self.autotrigger_monitor.start(1000)
                      
             except Exception as e:
                 print("error1",e)
     def timer_function_(self):
         self.timeleft.setText(str(timedelta(milliseconds=self.autotrigger.remainingTime())))
+    def check_timeout_(self):
+        if self.autotrigger.remainingTime()<=0:
+            if not self.thread_.isRunning():
+                self.start_thread()
+               
 
     def on_tray_clicked(self, reason):
         if reason == QSystemTrayIcon.Trigger: 
@@ -342,8 +363,8 @@ class MainWindow(QMainWindow):
 
 
         if event.key() == Qt.Key_Escape:
-            print("ESC pressed")
             self.close()
+    
 
     def show_window(self):
         self.showNormal()        
@@ -352,7 +373,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         event.ignore()
-        self.tray.showMessage("SRM AWA","Active!")
+        self.tray.showMessage("AWA","Active!")
         self.hide()
     
 
@@ -373,5 +394,5 @@ if scanner_.get_processes():
     print('yeah')
     sys.exit(0)
 else:
-    print("nako re baa")
+    pass
 sys.exit(app.exec_())

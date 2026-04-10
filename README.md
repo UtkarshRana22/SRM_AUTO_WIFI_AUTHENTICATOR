@@ -16,6 +16,10 @@ The project is packaged as a **standalone executable with an installer**, enabli
 * 📦 Installer support via **Inno Setup**
 * 🚫 No dependency on `netsh` or Location Services
 * ⚡ Smart execution logic to avoid unnecessary runs
+* ⌨️ **Global keyboard shortcuts support**
+
+  * `Alt + S` → Trigger authentication manually
+  * `Alt + Q` → Close the application instantly
 
 ---
 
@@ -45,7 +49,7 @@ The project is packaged as a **standalone executable with an installer**, enabli
 
 ### 🔹 For Developers
 
-```bash id="g6z2fp"
+```bash
 pip install selenium requests pyqt5
 ```
 
@@ -74,15 +78,26 @@ pip install selenium requests pyqt5
 
 ### Run Executable
 
-```id="ljm9k2"
+```
 SRM_AUTO_WIFI_AUTHENTICATOR.exe
 ```
 
 ### Run via Python (Developer Mode)
 
-```bash id="c9e8k1"
+```bash
 python main.py
 ```
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action                          |
+| -------- | ------------------------------- |
+| Alt + S  | Manually trigger authentication |
+| Alt + Q  | Exit the application            |
+
+> Shortcuts work globally when the application is running in the background.
 
 ---
 
@@ -151,3 +166,4 @@ The author assumes **no responsibility** for misuse or policy violations.
 
 MIT License
 Use, modify, and distribute responsibly.
+

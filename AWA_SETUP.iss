@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "AWA"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.2"
 #define MyAppPublisher "Utkarsh Rana"
 #define MyAppExeName "AWA.exe"
 
