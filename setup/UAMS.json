@@ -1,6 +1,7 @@
-{
+{ "update":true,
   "version": "1.1",
   "url": "https://github.com/yourname/AWA/releases/download/v1.2.0/AWA.exe",
   "force_update": false,
-  "message": "New update available!"
+  "message": "New update available!",
+  "messageversion":1
 }
