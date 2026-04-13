@@ -14,7 +14,6 @@ The project is packaged as a **standalone executable with an installer**, enabli
 * 🖥 Headless browser execution
 * ⚙️ Distributed as a **standalone `.exe`**
 * 📦 Installer support via **Inno Setup**
-* 🚫 No dependency on `netsh` or Location Services
 * ⚡ Smart execution logic to avoid unnecessary runs
 * ⌨️ **Global keyboard shortcuts support**
 
