@@ -2,7 +2,7 @@
 
 A Windows-based automation tool that detects network conditions and automatically authenticates the user on the **SRMIST captive portal** using Selenium.
 
-The project is packaged as a **standalone executable with an installer**, enabling seamless background execution — with **no dependency on `netsh` or Windows Location Services**.
+The project is packaged as a **standalone executable with an installer**, enabling seamless background execution.
 
 ---
 
