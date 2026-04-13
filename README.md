@@ -4,6 +4,8 @@ A Windows-based automation tool that detects network conditions and automaticall
 
 The project is packaged as a **standalone executable with an installer**, enabling seamless background execution.
 
+Supports Windows and requires presence of Chrome.
+
 ---
 
 ## ✨ Features
