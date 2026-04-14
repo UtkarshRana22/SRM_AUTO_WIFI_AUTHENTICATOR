@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "AWA"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "Utkarsh Rana"
 #define MyAppExeName "AWA.exe"
 
@@ -28,7 +28,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ; PrivilegesRequired=lowest
-OutputDir=C:\Users\ranau\OneDrive\Desktop\AutoSignIn\output\setup
+OutputDir=C:\Users\ranau\OneDrive\Desktop\AutoSignIn\setup
 OutputBaseFilename=AWA_SETUP
 SetupIconFile=C:\Users\ranau\OneDrive\Desktop\AutoSignIn\favicon.ico
 SolidCompression=yes
@@ -40,6 +40,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "C:\Users\ranau\OneDrive\Desktop\AutoSignIn\output\AWA\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\ranau\OneDrive\Desktop\AutoSignIn\output\AWA\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\ranau\OneDrive\Desktop\AutoSignIn\output\AWA_Updater.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

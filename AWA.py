@@ -1,4 +1,4 @@
-import sys,os,keyboard,time
+import sys,os,keyboard,time,json,wget,ctypes
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
 
@@ -9,7 +9,7 @@ from datetime import timedelta
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow,
     QSystemTrayIcon, QMenu,QLabel,
-    QLineEdit,QPushButton,QStackedWidget
+    QLineEdit,QPushButton,QStackedWidget,QProgressBar
 )
 from PyQt5.QtCore import Qt
 
@@ -22,7 +22,7 @@ from dotenv import dotenv_values
 
 
 
-
+version=1.3
 
 def detect_wifi(target_ssid="SRMIST"):
     window.status.setText("Detecting Network......")
@@ -185,6 +185,26 @@ class Keyboard_Monitor(QThread):
 
 
 
+class UAMS_DOWNLOAD(QThread):
+    progress = pyqtSignal(int)
+    def __init__(self, url):
+        super().__init__()
+        self.url=url
+    def run(self):
+        wget.download(self.url,bar=self.downloaprogress,out=os.getcwd()+"\\"+"_internal.zip")
+    def downloaprogress(self,csize,tsize,width):
+        print(csize/tsize*100)
+        self.progress.emit(int(csize/tsize*100))
+
+class UAMS_DOWNLOAD_FILE_CHECKER(QThread):
+    def run(self):
+        while not os.path.exists("_internal.zip"):
+            pass
+
+
+
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -239,8 +259,14 @@ class MainWindow(QMainWindow):
         self.restart=self.findChild(QPushButton,"restart")
         self.restart.clicked.connect(lambda:os.execl(sys.executable,sys.executable,*sys.argv))
        
-       
-        
+       #update and message system
+        self.message=self.findChild(QLabel,"message")
+        self.updatenow=self.findChild(QPushButton,"updatenow")
+        self.updatelater=self.findChild(QPushButton,"updatelater")
+        self.okay=self.findChild(QPushButton,"okay")
+        self.pbar=self.findChild(QProgressBar,"progressBar")
+        self.okay.clicked.connect(lambda:self.page.setCurrentIndex(1))
+        self.UAMS=False
      
         if not getattr(sys,"frozen",False):
 
@@ -327,7 +353,12 @@ class MainWindow(QMainWindow):
                                 self.autotrigger_monitor=QTimer(self)
                                 self.autotrigger_monitor.timeout.connect(self.check_timeout_)
                                 self.autotrigger_monitor.start(1000)
-                     
+                if not len(sys.argv)>1:
+                    if not self.UAMS: 
+                        self.UAMS_check()
+                else:
+                    if "https://" in sys.argv[1]:
+                        self.UAMS_START_DOWNLOAD(sys.argv[1])
             except Exception as e:
                 print("error1",e)
     def timer_function_(self):
@@ -375,12 +406,77 @@ class MainWindow(QMainWindow):
         event.ignore()
         self.tray.showMessage("AWA","Active!")
         self.hide()
+
+    def UAMS_check(self):
+        self.pbar.setVisible(False)
+        self.okay.setVisible(False)
+        self.updatenow.setVisible(False)
+        self.updatelater.setVisible(False)
+        self.UAMS=True
+        try:
+            branch= "main" if getattr(sys,"frozen",False) else "Test"
+    
+            resp=requests.get("https://raw.githubusercontent.com/UtkarshRana22/SRM_AUTO_WIFI_AUTHENTICATOR/"+branch+"/setup/UAMS.json")
+            dict_=json.loads(resp.text)
+            print(dict_)
+            if dict_["update"] and dict_["version"]!=version:
+                    if not dict_["force_update"]:
+                        self.page.setCurrentIndex(3)
+                        self.message.setText(dict_["message"])
+                        self.updatelater.setVisible(True)
+                        self.updatenow.setVisible(True)
+                        
+                        self.updatenow.clicked.connect(lambda:self.UAMS_START_SETUP(dict_["url"]))
+                        self.updatelater.clicked.connect(lambda:self.page.setCurrentIndex(1))
+                    else:
+                        self.UAMS_START_SETUP(dict_["url"])
+            else:
+                if dict_["showmessage"]:
+                    self.page.setCurrentIndex(3)
+                    self.message.setText(dict_["message"])
+                    self.okay.setVisible(True)
+
+        except Exception as e:
+            print(e)
+            pass
     
 
+    def UAMS_START_SETUP(self,url):
+         
+        print("ran UAMS_START_SETUP")
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", "AWA.exe",url, None, 1)
+        sys.exit(0)
+    
+    def UAMS_START_DOWNLOAD(self,url):
+        self.autotrigger.stop()
+        self.autotrigger_monitor.stop()
+        if os.path.exists(os.getcwd()+"\\_internal.zip"): os.remove(os.getcwd()+"\\_internal.zip")
+        self.download_thread=UAMS_DOWNLOAD(url)
+        self.download_thread.progress.connect(self.UAMS_DOWNLOAD_PROGRESS)
+        self.download_thread.finished.connect(self.UAMS_DOWNLOAD_FINISHED)
+        self.page.setCurrentIndex(3)
+        self.pbar.setValue(0)
+        self.pbar.setVisible(True)
+        self.updatelater.setVisible(False)
+        self.updatenow.setVisible(False)
+        self.okay.setVisible(False)
+        self.message.setText("Do not close the application\nUpdating......")
+        self.download_thread.start()
+    def UAMS_DOWNLOAD_PROGRESS(self,value):
+        self.pbar.setValue(int(value))
+    def UAMS_DOWNLOAD_FINISHED(self):
+        self.pbar.setVisible(False)
+        self.message.setText("Unpacking everything!")
+        self.UAMS_FILE=UAMS_DOWNLOAD_FILE_CHECKER()
+        self.UAMS_FILE.finished.connect(self.unpack)
+        self.UAMS_FILE.start()
+        
+        
 
 
-
-
+    def unpack(self):
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", "AWA_updater.exe","", None, 1)
+        sys.exit(0)
 
 
 
