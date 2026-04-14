@@ -1,7 +1,7 @@
 { "update":true,
   "version": "1.2",
   "url": "https://www.dropbox.com/scl/fi/yioa31o9pe95lc472ib2q/_internal.zip?rlkey=plun35lyfetftu3czs4uc0huk&st=mxppdk2r&raw=1",
-  "force_update": false,
+  "force_update": true,
   "message": "New update UAMS",
   "showmessage":false
 }
