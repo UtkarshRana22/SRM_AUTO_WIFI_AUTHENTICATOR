@@ -1,6 +1,6 @@
 
 
-# SRM_AUTO_WIFI_AUTHENTICATOR
+# SRM AWA 
 
 A Windows-based automation tool that detects network conditions and automatically authenticates the user on the **SRMIST captive portal** using **direct HTTP requests (no browser automation).**
 

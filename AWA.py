@@ -328,7 +328,7 @@ class MainWindow(QMainWindow):
         self.connectbtn.clicked.connect(self.start_thread)
         self.timeleft=self.findChild(QLabel,"timeleft")
         self.timeleftlabel=self.findChild(QLabel,"timeleftlabel")
-        self.nstatus=self.findChild(QLabel,"nstatus")
+        
   
        
        #update and message system
