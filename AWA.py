@@ -194,8 +194,8 @@ def login(progress):
                     print("this is a proble")
                     window.assertedtime=yo
             else:
-                progress.emit("message","Connected to the Internet!")
-                progress.emit("sty","color:green;")
+                progress.emit("message","Internet Still blocked")
+                progress.emit("sty","color:red;")
         else:
             print("Login failed:", result.get("message"))
             return False
@@ -456,8 +456,7 @@ class MainWindow(QMainWindow):
             x.write("\n")
             x.write("PASSWORD="+self.passw.text())
             x.close()
-            
-            self.nstatus.setText("Wait a while!")
+            os.execl(sys.executable,sys.executable,*sys.argv)
     
         
 

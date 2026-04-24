@@ -103,22 +103,6 @@
       <string>Save Creds</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>160</y>
-       <width>291</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:rgb(255, 0, 0)</string>
-     </property>
-     <property name="text">
-      <string>Kindly have Internet connection in order to SETUP</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="nstatus">
      <property name="geometry">
       <rect>
