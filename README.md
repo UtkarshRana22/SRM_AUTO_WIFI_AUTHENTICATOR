@@ -112,7 +112,7 @@ The application includes a built-in update delivery mechanism to ensure users al
 ### Run Executable
 
 ```
-SRM_AUTO_WIFI_AUTHENTICATOR.exe
+AWA.exe
 ```
 
 ### Run via Python (Developer Mode)
