@@ -1,10 +1,12 @@
+
+
 # SRM_AUTO_WIFI_AUTHENTICATOR
 
-A Windows-based automation tool that detects network conditions and automatically authenticates the user on the **SRMIST captive portal** using Selenium.
+A Windows-based automation tool that detects network conditions and automatically authenticates the user on the **SRMIST captive portal** using **direct HTTP requests (no browser automation).**
 
 The project is packaged as a **standalone executable with an installer**, enabling seamless background execution.
 
-Supports Windows and requires presence of Chrome.
+Supports Windows and requires an active Wi-Fi connection.
 
 ---
 
@@ -12,8 +14,13 @@ Supports Windows and requires presence of Chrome.
 
 * 🌐 Detects internet connectivity intelligently
 * 🧠 Detects **captive portal presence**
-* 🤖 Automates SRMIST captive portal authentication
-* 🖥 Headless browser execution
+* ⚡ Fast authentication using **direct HTTP requests (no Selenium/browser)**
+* 🖥 Fully background execution (no visible browser)
+* 🔄 **Built-in auto-update system**
+
+  * Automatically checks for new versions
+  * Downloads updates in the background
+  * Seamlessly installs updates
 * ⚙️ Distributed as a **standalone `.exe`**
 * 📦 Installer support via **Inno Setup**
 * ⚡ Smart execution logic to avoid unnecessary runs
@@ -27,7 +34,6 @@ Supports Windows and requires presence of Chrome.
 ## 🧰 Tech Stack
 
 * Python 3.8+
-* Selenium (with automatic driver management)
 * Requests
 * PyQt5
 * python-dotenv
@@ -51,27 +57,53 @@ Supports Windows and requires presence of Chrome.
 ### 🔹 For Developers
 
 ```bash
-pip install selenium requests pyqt5
+pip install requests pyqt5 python-dotenv
 ```
 
 ---
 
 ## ⚙️ How It Works
 
-1. **Connectivity Check**
+### 1. Connectivity Check
 
-   * Sends a request to Google's `generate_204` endpoint
+* Sends a request to Google's `generate_204` endpoint
+* If response is `204`, internet is already available
 
-2. **Captive Portal Detection**
+---
 
-   * If the request is **redirected** or does not return the expected `204` status, a captive portal is detected
+### 2. Captive Portal Detection
 
-3. **Authentication Flow**
+* If the request is **redirected** or returns a non-204 response
+* The system assumes a captive portal is active
 
-   * Launches a headless browser
-   * Opens captive portal
-   * Submits login form
-   * Verifies successful authentication
+---
+
+### 3. Authentication Flow (No Browser)
+
+* Captures session cookies from the captive portal
+* Sends a **POST request** with login credentials
+* Handles required headers and tokens
+* Verifies successful authentication via response validation
+
+---
+
+## 🔄 Auto Update System
+
+The application includes a built-in update delivery mechanism to ensure users always have the latest version.
+
+### How it works
+
+1. Checks for updates from a remote source
+2. Downloads the latest version if available
+3. Closes the running application
+4. Triggers an updater process (script/executable)
+5. Replaces old files and relaunches the application
+
+### Benefits
+
+* Ensures compatibility with captive portal changes
+* Delivers bug fixes instantly
+* No manual reinstall required
 
 ---
 
@@ -119,20 +151,26 @@ This tool does **not** connect to Wi-Fi — it only handles authentication.
 
 ---
 
+### 🔄 Updates
+
+* Internet connection is required for update checks
+* Antivirus may flag updater behavior (due to file replacement mechanisms)
+
+---
+
 ## 🚧 Challenges & Limitations
 
 * **Portal Dependency**
 
-  * Breaks if captive portal UI changes
+  * Breaks if captive portal API or request structure changes
 
-* **Captive Portal Detection Variability**
+* **Session Handling**
 
-  * Detection relies on HTTP response behavior (redirect/status mismatch)
-  * May vary depending on network configuration
+  * Requires correct handling of cookies/tokens
 
-* **Headless Browser Variability**
+* **Network Variability**
 
-  * May behave differently across systems
+  * Captive portal detection may vary depending on network behavior
 
 ---
 
@@ -147,8 +185,8 @@ This tool does **not** connect to Wi-Fi — it only handles authentication.
 
 ### Authentication fails
 
-* Portal UI may have changed
-* Update selectors/XPaths
+* Captive portal request structure may have changed
+* Re-check headers, cookies, and payload format
 
 ---
 
@@ -168,3 +206,4 @@ The author assumes **no responsibility** for misuse or policy violations.
 MIT License
 Use, modify, and distribute responsibly.
 
+---
