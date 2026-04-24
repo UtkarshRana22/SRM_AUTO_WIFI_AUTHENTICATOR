@@ -178,16 +178,14 @@ def login(progress):
         
             if not window.isVisible():
                 window.tray.showMessage("AWA","Logged In.....!")
-            print("we are here")
+            
             with open(os.path.join(os.getenv("APPDATA"),"AWA")+"\\times.log","a") as r:
                 yo=time.time()
                 r.writelines("\n"+str(yo))
                 print("this is a proble")
                 window.assertedtime=yo
 
-            try:
-                test = session.get("https://google.com", timeout=5)
-                print(" test:", test.status_code)
+            if is_connected():
                 progress.emit("message","Connected to the Internet!")
                 progress.emit("sty","color:green;")
                 with open(os.path.join(os.getenv("APPDATA"),"AWA")+"\\times.log","a") as r:
@@ -195,18 +193,9 @@ def login(progress):
                     r.writelines("\n"+str(yo))
                     print("this is a proble")
                     window.assertedtime=yo
-            except:
-                print("Internet still blocked")
-
-        
-            # # if result.get("keepAliveActive"):
-            # #     interval = int(result.get("delayInterval", 250))
-            # #     t = threading.Thread(target=keep_alive, args=(interval,), daemon=True)
-            # #     t.start()
-            # # else:
-            # #     print("No keep-alive required")
-
-            # return True
+            else:
+                progress.emit("message","Connected to the Internet!")
+                progress.emit("sty","color:green;")
         else:
             print("Login failed:", result.get("message"))
             return False
