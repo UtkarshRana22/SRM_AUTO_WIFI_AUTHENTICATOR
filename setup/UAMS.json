@@ -1,7 +1,7 @@
-{ "update":false,
+{ "update":true,
   "version": "1.4",
   "url": "",
   "force_update": false,
-  "message": "New update ",
+  "message": "Architectural Changes",
   "showmessage":false
 }
